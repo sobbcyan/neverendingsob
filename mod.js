@@ -47,7 +47,6 @@ G.AddData({
 			name:'agricultural tools',
 			desc:'Specialized tools used for preparing soil and harvesting crops.',
 			icon:[7,10],
-			partOf:'gear',
 			category:'gear',
 			displayUsed:true,
 		});
