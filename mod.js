@@ -40,7 +40,6 @@ G.AddData({
 			name:'farmland',
 			desc:'Cultivated land prepared for growing crops.',
 			icon:[6,10],
-			meta:true,
 			displayUsed:true,
 		});
 
@@ -121,30 +120,6 @@ G.AddData({
 						'seeds':1
 					},
 					every:10
-				},
-
-				{
-					type:'mult',
-					value:1.25,
-					req:{
-						'agricultural tools':true
-					}
-				},
-
-				{
-					type:'mult',
-					value:1.5,
-					req:{
-						'irrigation':true
-					}
-				},
-
-				{
-					type:'mult',
-					value:1.2,
-					req:{
-						'harvest rituals':'on'
-					}
 				}
 			],
 
