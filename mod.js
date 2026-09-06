@@ -1,13 +1,12 @@
 G.AddData({
 	name:'NeverEnding Sobbing',
 	author:'Sobb',
-	desc:'Adds various things.',
+	desc:'Adds agriculture and farming.',
 	engineVersion:1,
 	manifest:0,
 
 	func:function()
 	{
-
 		/*=====================================================================================
 		AGRICULTURE RESOURCES
 		=======================================================================================*/
@@ -22,10 +21,16 @@ G.AddData({
 
 		new G.Res({
 			name:'grain',
-			desc:'Grain harvested from cultivated fields. It can be eaten directly or stored for later use.',
+			desc:'Grain harvested from cultivated fields. It is a reliable source of [food].',
 			icon:[5,10],
 			turnToByContext:{
-				'eat':'food'
+				'eating':{
+					'health':0.01,
+					'happiness':0
+				},
+				'decay':{
+					'spoiled food':1
+				}
 			},
 			partOf:'food',
 			category:'food',
@@ -35,13 +40,13 @@ G.AddData({
 			name:'farmland',
 			desc:'Cultivated land prepared for growing crops.',
 			icon:[6,10],
-			category:'main',
 			meta:true,
+			displayUsed:true,
 		});
 
 		new G.Res({
 			name:'agricultural tools',
-			desc:'Specialized tools for preparing soil and harvesting crops.',
+			desc:'Specialized tools used for preparing soil and harvesting crops.',
 			icon:[7,10],
 			partOf:'gear',
 			category:'gear',
@@ -50,29 +55,15 @@ G.AddData({
 
 
 		/*=====================================================================================
-		FOOD INTEGRATION
-		=======================================================================================*/
-
-		/*
-			Grain is made part of the existing food system.
-			This means existing food policies and population consumption
-			can interact with it.
-		*/
-
-		G.getRes('grain').partOf='food';
-
-
-		/*=====================================================================================
-		FARM BUILDING
+		FARM
 		=======================================================================================*/
 
 		new G.Unit({
 			name:'farm',
-			desc:'@provides 2 [farmland]@uses [land] to create productive fields<>A cultivated plot of land where crops can be grown year after year.',
+			desc:'@provides 2 [farmland]@uses [land]<>A cultivated plot of land where crops can be grown.',
 			icon:[8,10],
 
 			cost:{
-				'mud':25,
 				'archaic building materials':25
 			},
 
@@ -81,8 +72,16 @@ G.AddData({
 			},
 
 			effects:[
-				{type:'provide',what:{'farmland':2}},
-				{type:'waste',chance:1/500}
+				{
+					type:'provide',
+					what:{
+						'farmland':2
+					}
+				},
+				{
+					type:'waste',
+					chance:1/500
+				}
 			],
 
 			req:{
@@ -100,7 +99,7 @@ G.AddData({
 		new G.Unit({
 			name:'farmer',
 
-			desc:'@cultivates [farmland] and produces [grain]@requires [seeds] to plant crops<>Farmers cultivate fields and carefully save part of each harvest as seed for the next planting season.',
+			desc:'@cultivates [farmland] and produces [grain]@requires [seeds] to plant crops<>Farmers cultivate fields and save part of each harvest as seed for the next planting season.',
 
 			icon:[9,10],
 
@@ -112,15 +111,6 @@ G.AddData({
 			},
 
 			effects:[
-
-				/*
-					Basic farming.
-
-					1 seed is planted.
-					After 10 ticks, the farmer harvests 6 grain
-					and saves 1 grain as seed.
-				*/
-
 				{
 					type:'convert',
 					from:{
@@ -130,13 +120,8 @@ G.AddData({
 						'grain':6,
 						'seeds':1
 					},
-					every:10,
-					mode:'farming'
+					every:10
 				},
-
-				/*
-					Better tools make farming 25% more efficient.
-				*/
 
 				{
 					type:'mult',
@@ -146,10 +131,6 @@ G.AddData({
 					}
 				},
 
-				/*
-					Irrigation improves crop yields.
-				*/
-
 				{
 					type:'mult',
 					value:1.5,
@@ -158,11 +139,6 @@ G.AddData({
 					}
 				},
 
-				/*
-					Harvest rituals already exist in the base game.
-					Allow agriculture to benefit from them as well.
-				*/
-
 				{
 					type:'mult',
 					value:1.2,
@@ -170,7 +146,6 @@ G.AddData({
 						'harvest rituals':'on'
 					}
 				}
-
 			],
 
 			req:{
@@ -183,13 +158,13 @@ G.AddData({
 
 
 		/*=====================================================================================
-		AGRICULTURAL TOOLS
+		AGRICULTURAL WORKSHOP
 		=======================================================================================*/
 
 		new G.Unit({
 			name:'agricultural workshop',
 
-			desc:'@crafts [agricultural tools] from [stone tools] and [stick]s<>A simple workshop where specialized farming implements are produced.',
+			desc:'@crafts [agricultural tools] from [stone tools] and [stick]s<>A simple workshop where farming implements are produced.',
 
 			icon:[10,10],
 
@@ -201,8 +176,6 @@ G.AddData({
 				'land':1
 			},
 
-			gizmos:true,
-
 			modes:{
 				'off':G.MODE_OFF,
 
@@ -210,10 +183,8 @@ G.AddData({
 					name:'Make agricultural tools',
 					icon:[7,10],
 					desc:'Turn [stone tools] and [stick]s into [agricultural tools].',
-					req:{
-						'agricultural tools':true
-					},
 					use:{
+						'worker':1,
 						'stone tools':1
 					}
 				}
@@ -234,6 +205,8 @@ G.AddData({
 				}
 			],
 
+			gizmos:true,
+
 			req:{
 				'agricultural tools':true
 			},
@@ -249,7 +222,7 @@ G.AddData({
 		new G.Unit({
 			name:'irrigation canal',
 
-			desc:'@provides 3 [farmland]@improves nearby agricultural production<>A simple canal redirects water toward cultivated fields, making harvests more reliable.',
+			desc:'@provides 3 [farmland]@uses [land]<>A simple canal redirects water toward cultivated fields.',
 
 			icon:[11,10],
 
@@ -263,8 +236,16 @@ G.AddData({
 			},
 
 			effects:[
-				{type:'provide',what:{'farmland':3}},
-				{type:'waste',chance:1/1000}
+				{
+					type:'provide',
+					what:{
+						'farmland':3
+					}
+				},
+				{
+					type:'waste',
+					chance:1/1000
+				}
 			],
 
 			req:{
@@ -276,13 +257,13 @@ G.AddData({
 
 
 		/*=====================================================================================
-		GRANARY EXPANSION
+		GRAIN STORE
 		=======================================================================================*/
 
 		new G.Unit({
 			name:'grain store',
 
-			desc:'@provides 1000 [food storage]@protects harvested [grain] from spoilage<>A dedicated storehouse for keeping grain dry and safe between harvests.',
+			desc:'@provides 1000 [food storage]@uses [land]<>A dedicated storehouse for keeping harvested grain dry and safe.',
 
 			icon:[12,10],
 
@@ -299,7 +280,7 @@ G.AddData({
 				{
 					type:'provide',
 					what:{
-						'food storage':1000
+						'added food storage':1000
 					}
 				},
 				{
@@ -317,13 +298,13 @@ G.AddData({
 
 
 		/*=====================================================================================
-		AGRICULTURAL TECH
+		AGRICULTURE
 		=======================================================================================*/
 
 		new G.Tech({
 			name:'agriculture',
 
-			desc:'@unlocks [farm]s and [farmer]s@unlocks the cultivation of [grain]@provides 20 [seeds]<>The deliberate cultivation of plants allows a tribe to produce food without relying entirely on whatever happens to grow in the wilderness.',
+			desc:'@unlocks [farm]s@unlocks [farmer]s@provides 20 [seeds]<>The deliberate cultivation of plants allows a tribe to produce food without relying entirely on wild plants.',
 
 			icon:[8,1],
 
@@ -351,13 +332,13 @@ G.AddData({
 
 
 		/*=====================================================================================
-		AGRICULTURAL TOOLS TECH
+		AGRICULTURAL TOOLS
 		=======================================================================================*/
 
 		new G.Tech({
 			name:'agricultural tools',
 
-			desc:'@unlocks [agricultural workshop]s@improves [farmer] efficiency<>Specialized tools make it easier to break soil, remove weeds and harvest mature crops.',
+			desc:'@unlocks [agricultural workshop]s@improves [farmer] efficiency<>Specialized tools make preparing and harvesting fields easier.',
 
 			icon:[7,1],
 
@@ -370,20 +351,18 @@ G.AddData({
 				'tool-making':true
 			},
 
-			effects:[],
-
 			chance:2,
 		});
 
 
 		/*=====================================================================================
-		IRRIGATION TECH
+		IRRIGATION
 		=======================================================================================*/
 
 		new G.Tech({
 			name:'irrigation',
 
-			desc:'@unlocks [irrigation canal]s@increases agricultural yields<>Canals and ditches allow farmers to bring water to fields that would otherwise depend entirely on rainfall.',
+			desc:'@unlocks [irrigation canal]s@improves [farmer] efficiency<>Canals and ditches allow farmers to bring water to cultivated fields.',
 
 			icon:[11,1],
 
@@ -396,20 +375,18 @@ G.AddData({
 				'well-digging':true
 			},
 
-			effects:[],
-
 			chance:2,
 		});
 
 
 		/*=====================================================================================
-		CROP STORAGE TECH
+		CROP STORAGE
 		=======================================================================================*/
 
 		new G.Tech({
 			name:'crop storage',
 
-			desc:'@unlocks [grain store]s@improves the tribe\'s ability to preserve harvested crops<>As farming becomes dependable, dedicated storage becomes necessary to carry food through poor harvests.',
+			desc:'@unlocks [grain store]s<>As farming becomes dependable, dedicated storage becomes necessary to carry food through poor harvests.',
 
 			icon:[12,1],
 
@@ -423,20 +400,18 @@ G.AddData({
 				'pottery':true
 			},
 
-			effects:[],
-
 			chance:2,
 		});
 
 
 		/*=====================================================================================
-		ADVANCED AGRICULTURE
+		CROP ROTATION
 		=======================================================================================*/
 
 		new G.Tech({
 			name:'crop rotation',
 
-			desc:'@improves [farmer] efficiency@reduces the long-term exhaustion of cultivated fields<>Farmers learn that planting different crops in succession can keep the soil productive for longer.',
+			desc:'@improves [farmer] efficiency<>Farmers learn that rotating crops can keep cultivated soil productive for longer.',
 
 			icon:[13,1],
 
@@ -450,20 +425,36 @@ G.AddData({
 				'crop storage':true
 			},
 
-			effects:[],
+			effects:[
+				{
+					type:'function',
+					func:function()
+					{
+						var farmer=G.getDict('farmer');
+
+						if (farmer)
+						{
+							farmer.effects.push({
+								type:'mult',
+								value:1.2
+							});
+						}
+					}
+				}
+			],
 
 			chance:1,
 		});
 
 
 		/*=====================================================================================
-		AGRICULTURAL TRAITS
+		FARMING TRADITION
 		=======================================================================================*/
 
 		new G.Trait({
 			name:'farming tradition',
 
-			desc:'@[farmer]s are 15% more efficient@a strong agricultural tradition is passed from one generation to the next.',
+			desc:'@[farmer]s are 15% more efficient@A strong agricultural tradition is passed from one generation to the next.',
 
 			icon:[14,1],
 
@@ -476,13 +467,24 @@ G.AddData({
 			req:{
 				'agriculture':true
 			},
+
+			effects:[
+				{
+					type:'mult',
+					value:1.15
+				}
+			],
 		});
 
+
+		/*=====================================================================================
+		SELECTIVE BREEDING
+		=======================================================================================*/
 
 		new G.Trait({
 			name:'selective breeding',
 
-			desc:'@increases [farmer] production@careful selection of the strongest plants gradually improves crop yields.',
+			desc:'@[farmer]s are 20% more efficient@Careful selection of the strongest plants gradually improves crop yields.',
 
 			icon:[15,1],
 
@@ -496,107 +498,13 @@ G.AddData({
 				'agriculture':true,
 				'crop rotation':true
 			},
-		});
-
-
-		/*=====================================================================================
-		AGRICULTURAL BONUSES
-		=======================================================================================*/
-
-		/*
-			Add the advanced agricultural technologies as production
-			multipliers to farmers.
-
-			These are separate effects so that the technologies can
-			be discovered independently.
-		*/
-
-		new G.Unit({
-			name:'field steward',
-
-			desc:'@improves the efficiency of [farmer]s@requires [crop rotation]<>A field steward organizes planting and harvest schedules, ensuring that cultivated land is used efficiently.',
-
-			icon:[16,10],
-
-			cost:{
-				'food':50
-			},
-
-			use:{
-				'worker':1
-			},
-
-			upkeep:{
-				'coin':0.25
-			},
 
 			effects:[
 				{
-					type:'gather',
-					what:{
-						'culture':0.05
-					}
-				},
-				{
 					type:'mult',
-					value:1.15,
-					req:{
-						'crop rotation':true
-					}
+					value:1.2
 				}
 			],
-
-			limitPer:{
-				'population':100
-			},
-
-			req:{
-				'crop rotation':true
-			},
-
-			category:'civil',
-			priority:5,
 		});
-
-
-		/*=====================================================================================
-		AGRICULTURE + EXISTING FOOD SYSTEM
-		=======================================================================================*/
-
-		/*
-			Once agriculture exists, grain becomes a legitimate food
-			source. The base game uses resources with partOf:'food'
-			and food policies to determine consumption, so no new
-			population system is required here.
-		*/
-
-
-		/*=====================================================================================
-		AGRICULTURAL PROGRESSION
-		=======================================================================================*/
-
-		/*
-			The intended progression is:
-
-			Sedentism
-				|
-				+-- Agriculture
-				|      |
-				|      +-- Agricultural Tools
-				|      |
-				|      +-- Irrigation
-				|      |
-				|      +-- Crop Storage
-				|             |
-				|             +-- Crop Rotation
-				|                    |
-				|                    +-- Selective Breeding
-				|
-				+-- Existing Building / Pottery / Carpentry etc.
-
-			This deliberately leaves the existing bronze, iron and
-			steel progression intact.
-		*/
-
 	}
 });
