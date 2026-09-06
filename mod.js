@@ -40,6 +40,7 @@ G.AddData({
 			name:'farmland',
 			desc:'Cultivated land prepared for growing crops.',
 			icon:[6,10],
+			category:'main',
 			displayUsed:true,
 		});
 
