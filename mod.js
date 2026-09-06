@@ -44,7 +44,7 @@ G.AddData({
 		});
 
 		new G.Res({
-			name:'agricultural tools',
+			name:'farming tools',
 			desc:'Specialized tools used for preparing soil and harvesting crops.',
 			icon:[7,10],
 			category:'gear',
@@ -138,7 +138,7 @@ G.AddData({
 		new G.Unit({
 			name:'agricultural workshop',
 
-			desc:'@crafts [agricultural tools] from [stone tools] and [stick]s<>A simple workshop where farming implements are produced.',
+			desc:'@crafts [farming tools] from [stone tools] and [stick]s<>A simple workshop where farming implements are produced.',
 
 			icon:[10,10],
 
@@ -154,9 +154,9 @@ G.AddData({
 				'off':G.MODE_OFF,
 
 				'tools':{
-					name:'Make agricultural tools',
+					name:'Make farming tools',
 					icon:[7,10],
-					desc:'Turn [stone tools] and [stick]s into [agricultural tools].',
+					desc:'Turn [stone tools] and [stick]s into [farming tools].',
 					use:{
 						'worker':1,
 						'stone tools':1
@@ -172,7 +172,7 @@ G.AddData({
 						'stick':5
 					},
 					into:{
-						'agricultural tools':1
+						'farming tools':1
 					},
 					every:10,
 					mode:'tools'
